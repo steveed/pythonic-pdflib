@@ -6,10 +6,10 @@ class PythonicPDFlib(PDFlib):
     """
     A more pythonic API for PDFlib.
     """
-    
+
     def __init__(self, options=None):
         super(PythonicPDFlib, self).__init__()
-        
+
         if 'errorpolicy' not in options:
             options.update({'errorpolicy': 'exception'})
 
@@ -62,8 +62,8 @@ class PythonicPDFlib(PDFlib):
         yield table
 
     def add_textflow(self, text, textflow=None, options=None):
-        return super(PythonicPDFlib, self).add_textflow(default(textflow, -1), 
-                                                        text, 
+        return super(PythonicPDFlib, self).add_textflow(default(textflow, -1),
+                                                        text,
                                                         to_optlist(options))
 
     @contextmanager
@@ -85,12 +85,10 @@ class PythonicPDFlib(PDFlib):
         self.end_dpart(options)
 
     def begin_dpart(self, options=None):
-        optlist = to_optlist(options)
         super(PythonicPDFlib, self).begin_dpart(to_optlist(options))
 
     def end_dpart(self, options=None):
-        optlist = to_optlist(options)
-        super(PythonicPDFlib, self).end_dpart(optlist)        
+        super(PythonicPDFlib, self).end_dpart(to_optlist(options))
 
     @contextmanager
     def font(self, fontname, a, b, c, d, e, f, options=None):
@@ -108,13 +106,13 @@ class PythonicPDFlib(PDFlib):
     def glyph(self, uv, options=None):
         """
         Manage calls to begin_glyph_ext and end_glyph.
-        
+
         Note that begin_glyph is deprecated in favour of begin_glyph_ext.
         """
         self.begin_glyph_ext(uv, options)
         yield
         self.end_glyph()
-    
+
     def begin_glyph_ext(self, uv, options=None):
         super(PythonicPDFlib, self).begin_glyph_ext(uv, to_optlist(options))
 
@@ -129,7 +127,7 @@ class PythonicPDFlib(PDFlib):
 
     def begin_item(self, tagname, options=None):
         return super(PythonicPDFlib, self).begin_item(tagname, to_optlist(options))
-    
+
     @contextmanager
     def mc(self, tagname, options=None):
         """
@@ -138,7 +136,7 @@ class PythonicPDFlib(PDFlib):
         self.begin_mc(tagname, options)
         yield
         self.end_mc()
-        
+
     def begin_mc(self, tagname, options=None):
         super(PythonicPDFlib, self).begin_mc(tagname, to_optlist(options))
 
@@ -280,6 +278,12 @@ class PythonicPDFlib(PDFlib):
     def load_graphics(self, type, filename, options=None):
         return super(PythonicPDFlib, self).load_graphics(type, filename, to_optlist(options))
 
+    @contextmanager
+    def graphics(self, type, filename, options=None):
+        graphics = self.load_graphics(type, filename, options)
+        yield graphics
+        self.close_graphics(graphics)
+
     def load_iccprofile(self, profilename, options=None):
         return super(PythonicPDFlib, self).load_iccprofile(profilename, to_optlist(options))
 
@@ -341,7 +345,7 @@ class PythonicPDFlib(PDFlib):
             self.end_page_ext(to_optlist(end_page_ext_options))
         else:
             self.suspend_page(to_optlist(suspend_page_options))
-    
+
     def close_suspended_page(self, page_no):
         with self.resume_page(page_no, close=True): pass
 
@@ -365,5 +369,3 @@ class PythonicPDFlib(PDFlib):
 
     def suspend_page(self, options=None):
         super(PythonicPDFlib, self).suspend_page(to_optlist(options))
-
-
