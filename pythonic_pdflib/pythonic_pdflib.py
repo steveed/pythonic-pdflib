@@ -1,6 +1,7 @@
 from PDFlib import PDFlib
 from contextlib import contextmanager
-from .helpers import to_optlist, default
+from .helpers import to_optlist, default, iteritems
+
 
 class PythonicPDFlib(PDFlib):
     """
@@ -13,7 +14,7 @@ class PythonicPDFlib(PDFlib):
         if 'errorpolicy' not in options:
             options.update({'errorpolicy': 'exception'})
 
-        for option, value in options.iteritems():
+        for option, value in iteritems(options):
             self.set_option(option, value)
 
     def set_option(self, option, value):
@@ -58,7 +59,7 @@ class PythonicPDFlib(PDFlib):
                     options = col_options[coli]
                 except IndexError:
                     options = row_options
-                self.add_table_cell(coli+1, rowi+2, col, table=table, options=options)
+                self.add_table_cell(coli + 1, rowi + 2, col, table=table, options=options)
         yield table
 
     def add_textflow(self, text, textflow=None, options=None):
@@ -78,7 +79,7 @@ class PythonicPDFlib(PDFlib):
     @contextmanager
     def dpart(self, options=None):
         """
-        Manage calls to begin_dpart and end_depart
+        Manage calls to begin_dpart and end_depart.
         """
         self.begin_dpart(options)
         yield
@@ -93,7 +94,7 @@ class PythonicPDFlib(PDFlib):
     @contextmanager
     def font(self, fontname, a, b, c, d, e, f, options=None):
         """
-        Manage calls to begin_font and end_font
+        Manage calls to begin_font and end_font.
         """
         self.begin_font(fontname, a, b, c, d, e, f, options)
         yield
@@ -347,7 +348,8 @@ class PythonicPDFlib(PDFlib):
             self.suspend_page(to_optlist(suspend_page_options))
 
     def close_suspended_page(self, page_no):
-        with self.resume_page(page_no, close=True): pass
+        with self.resume_page(page_no, close=True):
+            pass
 
     def set_graphics_option(self, options=None):
         super(PythonicPDFlib, self).set_graphics_option(to_optlist(options))
